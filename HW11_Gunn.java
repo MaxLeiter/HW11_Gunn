@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
  *1/31/17
  */
 
-public class AVL_Tree<Key extends Comparable<Key>, Value> {
+public class HW11_Gunn<Key extends Comparable<Key>, Value> { //AVL Tree
 
     private static enum Balance {
 
@@ -68,7 +68,7 @@ public class AVL_Tree<Key extends Comparable<Key>, Value> {
     
     private Node root;
 
-    public AVL_Tree() {
+    public HW11_Gunn() {
         this.root = null;
     }
 
@@ -271,36 +271,36 @@ public class AVL_Tree<Key extends Comparable<Key>, Value> {
 //            /            \
 //           b              c
        System.out.println("called rotate right then left");
-       Balance b = node.left.right.balance; //maybe get null pointer here
-       node.right = rotateRight(node.right);
-       node = rotateLeft(node);
-//       Node a = node;
-//       Node c = node.right;
-//       Node b = node.right.left;
-//       //right around the right side
-//       a.right = b;
-//       b.right = c;
-//       
-//       //left around the whole thing
-//       a.right = b.left;
-//       b.left = a;
-//       return b;
-       switch (b) {
-           case LEFT:
-               node.balance = Balance.RIGHT;
-               node.left.balance = Balance.EVEN;
-               node.left.right.balance = Balance.EVEN;
+//       Balance b = node.left.right.balance; //maybe get null pointer here
+//       node.right = rotateRight(node.right);
+//       node = rotateLeft(node);
+       Node a = node;
+       Node c = node.right;
+       Node b = node.right.left;
+       switch (b.balance) { 
+           case LEFT: //should these all be a.balance or node.balance?
+               b.balance = Balance.RIGHT;
+               b.right.balance = Balance.EVEN;
+               a.right.left.balance = Balance.EVEN;
            case RIGHT:
-               node.balance = Balance.EVEN;
-               node.left.right.balance = Balance.EVEN;
-               node.left.balance = Balance.LEFT;
+               b.balance = Balance.EVEN;
+               b.right.left.balance = Balance.EVEN;
+               a.right.balance = Balance.LEFT;
                
            case EVEN:
-               node.balance = Balance.EVEN;
-               node.left.balance = Balance.EVEN;
-               node.left.right.balance = Balance.EVEN;
+               b.balance = Balance.EVEN;
+               b.right.balance = Balance.EVEN;
+               b.right.left.balance = Balance.EVEN;
        }
-       return node;
+       //right around the right side
+       c.left = b.right;
+       b.right = c;
+       
+       //left around the whole thing
+       a.right = b.left;
+       b.left = a;
+       return b;
+//       return node;
    }
    
    private Node rotateLeftThenRight(Node node) {
@@ -324,16 +324,32 @@ public class AVL_Tree<Key extends Comparable<Key>, Value> {
 //       Node b = a.right;
 //       
 //       //left around the left side
-//       c.left = b;
+//       a.right = b.left;
 //       b.left = a;
 //       
 //       //right around the entire thing
 //       c.left = b.right;
 //       b.right = c;
-//       return node;
+//       return b;
+//       switch (b.balance) { 
+//           case LEFT: //should these all be a.balance or node.balance?
+//               b.balance = Balance.RIGHT;
+//               b.left.balance = Balance.EVEN;
+//               a.left.right.balance = Balance.EVEN;
+//           case RIGHT:
+//               b.balance = Balance.EVEN;
+//               b.left.right.balance = Balance.EVEN;
+//               a.left.balance = Balance.LEFT;
+//               
+//           case EVEN:
+//               b.balance = Balance.EVEN;
+//               b.left.balance = Balance.EVEN;
+//               b.left.right.balance = Balance.EVEN;
+//       }
    }
    
     private Result add(Node node, Key key, Value value) {
+        System.out.println("called add on key: " + key);
         if (node == null) {
             return taller(new Node(key, value));
 
@@ -346,17 +362,18 @@ public class AVL_Tree<Key extends Comparable<Key>, Value> {
                     return rebalanceLeftSubtree(node);
                 }
                 else {
-                    return sameHeight(r.node);
+                    return sameHeight(node);
                 }
 
             } else if (compare > 0) {
                 Result r = add(node.right, key, value);
+                System.out.println("r.key: " + r.node.key);
                 node.right = r.node;
                 if (r.grew == true) {
                     return rebalanceRightSubtree(node);
                 }
                 else {
-                    return sameHeight(r.node);
+                    return sameHeight(node);
                 }
             } else {
                 node.key = key;
@@ -431,7 +448,7 @@ public class AVL_Tree<Key extends Comparable<Key>, Value> {
     }
 
     public static void main(String[] args) {
-        AVL_Tree<String, String> tree = new AVL_Tree<>();
+        HW11_Gunn<String, String> tree = new HW11_Gunn<>();
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
         // Allow the user to enter commands on standard input:
@@ -494,7 +511,7 @@ public class AVL_Tree<Key extends Comparable<Key>, Value> {
                     break;
 
                 case "clear":
-                    tree = new AVL_Tree();
+                    tree = new HW11_Gunn();
                     break;
 
                 case "tree":
