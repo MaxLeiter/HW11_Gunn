@@ -277,6 +277,13 @@ public class HW11_Gunn<Key extends Comparable<Key>, Value> { //AVL Tree
        Node a = node;
        Node c = node.right;
        Node b = node.right.left;
+       //right around the right side
+       c.left = b.right;
+       b.right = c;
+       
+       //left around the whole thing
+       a.right = b.left;
+       b.left = a;
        switch (b.balance) { 
            case LEFT: //should these all be a.balance or node.balance?
                b.balance = Balance.RIGHT;
@@ -286,19 +293,11 @@ public class HW11_Gunn<Key extends Comparable<Key>, Value> { //AVL Tree
                b.balance = Balance.EVEN;
                b.right.left.balance = Balance.EVEN;
                a.right.balance = Balance.LEFT;
-               
            case EVEN:
                b.balance = Balance.EVEN;
                b.right.balance = Balance.EVEN;
-               b.right.left.balance = Balance.EVEN;
+               b.left.balance = Balance.EVEN;
        }
-       //right around the right side
-       c.left = b.right;
-       b.right = c;
-       
-       //left around the whole thing
-       a.right = b.left;
-       b.left = a;
        return b;
 //       return node;
    }
@@ -310,46 +309,43 @@ public class HW11_Gunn<Key extends Comparable<Key>, Value> { //AVL Tree
 //          \         /
 //           b       a
        System.out.println("called rotate left then right");
-       if (node.left.right.balance == Balance.LEFT) {
-           node.balance = Balance.RIGHT;
-       }
-       else if (node.left.right.balance == Balance.EVEN) {
-           node.balance = Balance.EVEN;
-       }
-       node.left = rotateLeft(node.left);
-       node.balance = Balance.EVEN;
-       return rotateRight(node);
-//       Node c = node;
-//       Node a = c.left;
-//       Node b = a.right;
-//       
-//       //left around the left side
-//       a.right = b.left;
-//       b.left = a;
-//       
-//       //right around the entire thing
-//       c.left = b.right;
-//       b.right = c;
-//       return b;
-//       switch (b.balance) { 
-//           case LEFT: //should these all be a.balance or node.balance?
-//               b.balance = Balance.RIGHT;
-//               b.left.balance = Balance.EVEN;
-//               a.left.right.balance = Balance.EVEN;
-//           case RIGHT:
-//               b.balance = Balance.EVEN;
-//               b.left.right.balance = Balance.EVEN;
-//               a.left.balance = Balance.LEFT;
-//               
-//           case EVEN:
-//               b.balance = Balance.EVEN;
-//               b.left.balance = Balance.EVEN;
-//               b.left.right.balance = Balance.EVEN;
+//       if (node.left.right.balance == Balance.LEFT) {
+//           node.balance = Balance.RIGHT;
 //       }
+//       else if (node.left.right.balance == Balance.EVEN) {
+//           node.balance = Balance.EVEN;
+//       }
+//       node.left = rotateLeft(node.left);
+//       node.balance = Balance.EVEN;
+//       return rotateRight(node);
+       Node c = node;
+       Node a = c.left;
+       Node b = a.right;
+       //left around the left side
+       a.right = b.left;
+       b.left = a;
+       
+       //right around the entire thing
+       c.left = b.right;
+       b.right = c;
+       switch (b.balance) { 
+           case LEFT: 
+               b.balance = Balance.RIGHT;
+               b.left.balance = Balance.EVEN;
+               a.left.right.balance = Balance.EVEN;
+           case RIGHT:
+               b.balance = Balance.EVEN;
+               b.left.right.balance = Balance.EVEN;
+               a.left.balance = Balance.LEFT;
+           case EVEN:
+               b.balance = Balance.EVEN;
+               b.left.balance = Balance.EVEN;
+               b.right.balance = Balance.EVEN;
+       }
+       return b;
    }
    
     private Result add(Node node, Key key, Value value) {
-        System.out.println("called add on key: " + key);
         if (node == null) {
             return taller(new Node(key, value));
 
@@ -367,7 +363,6 @@ public class HW11_Gunn<Key extends Comparable<Key>, Value> { //AVL Tree
 
             } else if (compare > 0) {
                 Result r = add(node.right, key, value);
-                System.out.println("r.key: " + r.node.key);
                 node.right = r.node;
                 if (r.grew == true) {
                     return rebalanceRightSubtree(node);
